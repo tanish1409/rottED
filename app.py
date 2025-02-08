@@ -18,6 +18,8 @@ video_urls = []
 @app.route('/process_pdf', methods=['POST'])
 def process_pdf():
     file = request.files['file']
+    brainrot_mode = request.form.get('brainrot_mode')  # Get BrainRot status
+    print("BRAINROT MODE: " + brainrot_mode)
     if file:
         file_path = os.path.join("uploads", file.filename)
         os.makedirs("uploads", exist_ok=True)
@@ -29,7 +31,8 @@ def process_pdf():
         #    capture_output=True, text=True)
 
         python_executable = sys.executable
-        result = subprocess.run([python_executable, 'main.py', file_path], capture_output=True, text=True)
+        result = subprocess.run([python_executable, 'main.py', file_path, brainrot_mode], capture_output=True, text=True)
+        print("Subprocess STDOUT:", result.stdout)
         if result.returncode == 0:
             unique_id = str(uuid.uuid4())
             output_video_filename = f'output_{unique_id}.mp4'

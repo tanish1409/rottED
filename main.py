@@ -9,7 +9,7 @@ from moviepy import VideoFileClip, CompositeVideoClip, ImageClip, TextClip, Audi
 from gtts import gTTS
 
 
-# Function to read API, prevents all users from commiting code with hard coded key
+# Function to read API, prevents all users from committing code with hard coded key
 def get_api_key(file_path: str) -> str:
     with open(file_path, 'r') as file:
         return file.readline().strip()
@@ -50,26 +50,14 @@ def create_video_with_overlay(gameplay_video_path, overlay_image_path, overlay_t
 
     # Load overlay image and set duration directly in the constructor
     image_clip = ImageClip(overlay_image_path, duration=video.duration)
-    image_clip = image_clip.resized(height=400).with_position(("center", 300))
-
-    # Create caption text clip
-    # caption_clip = TextClip(
-    #     text=overlay_text,  # Explicitly specify 'txt'
-    #     font_size=40,
-    #     color='white',
-    #     bg_color='black',
-    #     size=(video.w, None),
-    #     method='caption',  # For automatic text wrapping
-    #     font='arial',  # Specify a valid system font
-    #     duration=video.duration
-    # ).with_position(("center", "bottom"))
+    image_clip = image_clip.resized(height=400).with_position(("center", 250))
 
     # Combine video, image overlay, caption, and audio
     final_video = CompositeVideoClip([video, image_clip])
     final_video = final_video.with_audio(audio)
 
     # Export the final video
-    final_video.write_videofile("final_output.mp4", fps=1)
+    final_video.write_videofile("final_output.mp4", fps=60)
 
 
 # Press the green button in the gutter to run the script.
@@ -77,21 +65,28 @@ if __name__ == '__main__':
     key = get_api_key("API_KEY.txt")
     client = genai.Client(api_key=key)
 
-    # Read the PDF file as bytes
-    #filepath = pathlib.Path("CSP-1.pdf")
 
-    if len(sys.argv) < 2:
-        print("Error: No PDF file path provided.")
+    if len(sys.argv) < 3:
+        print("Error: No PDF file path provided or brainrot mode selected.")
         sys.exit(1)
     pdf_path = sys.argv[1]
+    brainrot_mode = sys.argv[2]
     filepath = pathlib.Path(pdf_path)
-    print(filepath)
+    brainrot_mode = brainrot_mode.strip()
+    brainrot_mode = int(brainrot_mode)
+    print(brainrot_mode)
 
+    if brainrot_mode == 1:
+        prompt = "I have given you a PDF that outlines an academic concept. I want you to create a detailed summary of the" \
+                 "content into a text that can be read in 60 seconds. The summary should include critical information and" \
+                 "specific examples mentioned in the pdf. You do not need to add extra words or formatting, simply give the" \
+                 "output as described. Use excessive Gen Z lingo in your summary to engage the younger audience."
 
-    prompt = "I have given you a PDF that outlines an academic concept. I want you to create a detailed summary of the" \
-             "content into a text that can be read in 60 seconds. The summary should include critical information and" \
-             "specific examples mentioned in the pdf. You do not need to add extra words or formatting, simply give the" \
-             "output as described."
+    else:
+        prompt = "I have given you a PDF that outlines an academic concept. I want you to create a detailed summary of the" \
+                 "content into a text that can be read in 60 seconds. The summary should include critical information and" \
+                 "specific examples mentioned in the pdf. You do not need to add extra words or formatting, simply give the" \
+                 "output as described."
 
     # Send the PDF and prompt to Gemini API
     summary = client.models.generate_content(
