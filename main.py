@@ -1,5 +1,5 @@
 import math
-
+import sys
 from google import genai
 from google.genai import types
 from PIL import Image
@@ -75,11 +75,18 @@ def create_video_with_overlay(gameplay_video_path, overlay_image_path, overlay_t
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     key = get_api_key("API_KEY.txt")
-
     client = genai.Client(api_key=key)
 
     # Read the PDF file as bytes
-    filepath = pathlib.Path("CSP-1.pdf")
+    #filepath = pathlib.Path("CSP-1.pdf")
+
+    if len(sys.argv) < 2:
+        print("Error: No PDF file path provided.")
+        sys.exit(1)
+    pdf_path = sys.argv[1]
+    filepath = pathlib.Path(pdf_path)
+    print(filepath)
+
 
     prompt = "I have given you a PDF that outlines an academic concept. I want you to create a detailed summary of the" \
              "content into a text that can be read in 60 seconds. The summary should include critical information and" \

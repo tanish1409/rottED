@@ -204,25 +204,32 @@
             fileInput.onchange = function () {
                 let file = fileInput.files[0];
                 if (file) {
-                    let pdfPath = file.path;  // Get the file path (works on Electron, Node.js, but needs tweaking in browsers)
-                    
-                    let command = `python process_pdf.py "${pdfPath}"`;
+                    let formData = new FormData();
+                    formData.append('file', file);
 
-                    // Execute the command (only works in Node.js/Electron, not in a standard browser)
-                    require('child_process').exec(command, (error, stdout, stderr) => {
-                        if (error) {
-                            console.error(`Error: ${error.message}`);
-                            return;
+                    fetch('http://127.0.0.1:5000/process_pdf', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            console.log(data.output);
+                            alert("PDF processed successfully!");
+                        } else {
+                            console.error(data.error);
+                            alert("Error processing PDF.");
                         }
-                        if (stderr) {
-                            console.error(`Stderr: ${stderr}`);
-                            return;
-                        }
-                        console.log(`Output: ${stdout}`);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Server error.");
                     });
                 }
             };
         }
+
+
 
         function likeVideo(button) {
             console.log("Liked");
