@@ -12,6 +12,8 @@ CORS(app)
 STATIC_FOLDER = 'static'  # Folder to store generated videos
 os.makedirs(STATIC_FOLDER, exist_ok=True)
 
+video_urls = []
+
 
 @app.route('/process_pdf', methods=['POST'])
 def process_pdf():
@@ -32,12 +34,14 @@ def process_pdf():
             unique_id = str(uuid.uuid4())
             output_video_filename = f'output_{unique_id}.mp4'
             output_video_path = os.path.join(STATIC_FOLDER, output_video_filename)
-            print(output_video_path)
+            video_url = f'./../../../static/{output_video_filename}'
+            video_urls.append(video_url)
+            print(video_urls)
             try:
                 shutil.copy('final_output.mp4', output_video_path)
             except Exception as e:
                 print(f"An error occurred while generating video: {e}")
-            return jsonify({'message': 'PDF processed successfully', 'output': result.stdout})
+            return jsonify({'message': 'PDF processed successfully', 'output': result.stdout, 'video_urls': video_urls})
         else:
             return jsonify({'error': result.stderr}), 500
 

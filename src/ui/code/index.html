@@ -134,58 +134,7 @@
         <button>📁</button>
     </div>
     <div class="main">
-        <div class="reels-container">
-            <div class="reel">
-                <video src=".\..\videos\demo2.mp4" muted autoplay loop></video>
-                <div class="controls">
-                    <button onclick="toggleMute(this)">🔊</button>
-                </div>
-                <div class="reaction-buttons">
-                    <button onclick="likeVideo(this)">👍</button>
-                    <button onclick="dislikeVideo(this)">👎</button>
-                </div>
-            </div>
-            <div class="reel">
-                <video src=".\..\videos\demo1.mp4" muted autoplay loop></video>
-                <div class="controls">
-                    <button onclick="toggleMute(this)">🔊</button>
-                </div>
-                <div class="reaction-buttons">
-                    <button onclick="likeVideo(this)">👍</button>
-                    <button onclick="dislikeVideo(this)">👎</button>
-                </div>
-            </div>
-            <div class="reel">
-                <video src=".\..\videos\demo2.mp4" muted autoplay loop></video>
-                <div class="controls">
-                    <button onclick="toggleMute(this)">🔊</button>
-                </div>
-                <div class="reaction-buttons">
-                    <button onclick="likeVideo(this)">👍</button>
-                    <button onclick="dislikeVideo(this)">👎</button>
-                </div>
-            </div>
-            <div class="reel">
-                <video src=".\..\videos\demo3.mp4" muted autoplay loop></video>
-                <div class="controls">
-                    <button onclick="toggleMute(this)">🔊</button>
-                </div>
-                <div class="reaction-buttons">
-                    <button onclick="likeVideo(this)">👍</button>
-                    <button onclick="dislikeVideo(this)">👎</button>
-                </div>
-            </div>
-            <div class="reel">
-                <video src=".\..\videos\demo6.mp4" muted autoplay loop></video>
-                <div class="controls">
-                    <button onclick="toggleMute(this)">🔊</button>
-                </div>
-                <div class="reaction-buttons">
-                    <button onclick="likeVideo(this)">👍</button>
-                    <button onclick="dislikeVideo(this)">👎</button>
-                </div>
-            </div>
-        </div>
+        <div class="reels-container" id="reelsContainer"></div>
     </div>
     <div class="plus-btn" onclick="uploadPDF()">+</div>
     <input type="file" id="pdfUpload" style="display: none;" accept="application/pdf">
@@ -215,7 +164,31 @@
                     .then(data => {
                         if (data.message) {
                             console.log(data.output);
-                            alert("PDF processed successfully!");
+                            alert("PDF processed successfully!!");
+
+                            let reelsContainer = document.getElementById('reelsContainer');
+                            reelsContainer.innerHTML = ''; // Clear previous reels
+
+                            // Ensure video_urls exist before looping
+                            if (data.video_urls && data.video_urls.length > 0) {
+                                data.video_urls.forEach(video_url => {
+                                    let reel = document.createElement('div');
+                                    reel.className = 'reel';
+                                    reel.innerHTML = `
+                                        <video src="${video_url}" muted autoplay loop></video>
+                                        <div class="controls">
+                                            <button onclick="toggleMute(this)">🔊</button>
+                                        </div>
+                                        <div class="reaction-buttons">
+                                            <button onclick="likeVideo(this)">👍</button>
+                                            <button onclick="dislikeVideo(this)">👎</button>
+                                        </div>
+                                    `;
+                                    reelsContainer.appendChild(reel);
+                                });
+                            } else {
+                                console.log("No videos returned from the server.");
+                            }
                         } else {
                             console.error(data.error);
                             alert("Error processing PDF.");
