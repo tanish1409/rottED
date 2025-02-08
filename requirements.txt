@@ -1,4 +1,4 @@
-google-generativeai
+google
 google-genai
 Pillow
 moviepy
