@@ -1,11 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import subprocess
 import os
 import sys
+import uuid
+import shutil
 
 app = Flask(__name__)
 CORS(app)
+
+STATIC_FOLDER = 'static'  # Folder to store generated videos
+os.makedirs(STATIC_FOLDER, exist_ok=True)
 
 
 @app.route('/process_pdf', methods=['POST'])
@@ -24,6 +29,14 @@ def process_pdf():
         python_executable = sys.executable
         result = subprocess.run([python_executable, 'main.py', file_path], capture_output=True, text=True)
         if result.returncode == 0:
+            unique_id = str(uuid.uuid4())
+            output_video_filename = f'output_{unique_id}.mp4'
+            output_video_path = os.path.join(STATIC_FOLDER, output_video_filename)
+            print(output_video_path)
+            try:
+                shutil.copy('final_output.mp4', output_video_path)
+            except Exception as e:
+                print(f"An error occurred while generating video: {e}")
             return jsonify({'message': 'PDF processed successfully', 'output': result.stdout})
         else:
             return jsonify({'error': result.stderr}), 500
