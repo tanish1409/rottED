@@ -1,9 +1,11 @@
+import math
+
 from google import genai
 from google.genai import types
 from PIL import Image
 from io import BytesIO
 import pathlib
-import moviepy as mp
+from moviepy import VideoFileClip, CompositeVideoClip, ImageClip, TextClip, AudioFileClip, concatenate_videoclips
 from gtts import gTTS
 
 
@@ -12,7 +14,7 @@ def get_api_key(file_path: str) -> str:
     with open(file_path, 'r') as file:
         return file.readline().strip()
 
-def generate_image(promtp:str)->None:
+def generate_image(promtp:str)->Image:
 
     generated_prompt = prompt + " *- NO TEXT PLEASE"
 
@@ -25,7 +27,49 @@ def generate_image(promtp:str)->None:
     )
     for generated_image in response.generated_images:
         image = Image.open(BytesIO(generated_image.image.image_bytes))
-        image.show()
+        return image
+
+def generate_audio (summary:str, path:str)->None:
+    tts = gTTS(summary)
+    tts.save(path)
+
+
+def create_video_with_overlay(gameplay_video_path, overlay_image_path, overlay_text, audio_path):
+    # Load gameplay video and extract a 60-second segment
+    video = VideoFileClip(gameplay_video_path).subclipped(start_time=0, end_time=60)
+
+    # Load narration audio
+    audio = AudioFileClip(audio_path)
+    # Calculate the number of loops needed
+    loops_required = math.ceil(audio.duration / video.duration)
+
+    # Concatenate the video to loop it
+    if loops_required > 1:
+        video = concatenate_videoclips([video] * loops_required)
+    video = video.subclipped(0, audio.duration)  # Trim to exactly match audio duration
+
+    # Load overlay image and set duration directly in the constructor
+    image_clip = ImageClip(overlay_image_path, duration=video.duration)
+    image_clip = image_clip.resized(height=400).with_position(("center", 300))
+
+    # Create caption text clip
+    # caption_clip = TextClip(
+    #     text=overlay_text,  # Explicitly specify 'txt'
+    #     font_size=40,
+    #     color='white',
+    #     bg_color='black',
+    #     size=(video.w, None),
+    #     method='caption',  # For automatic text wrapping
+    #     font='arial',  # Specify a valid system font
+    #     duration=video.duration
+    # ).with_position(("center", "bottom"))
+
+    # Combine video, image overlay, caption, and audio
+    final_video = CompositeVideoClip([video, image_clip])
+    final_video = final_video.with_audio(audio)
+
+    # Export the final video
+    final_video.write_videofile("final_output.mp4", fps=1)
 
 
 # Press the green button in the gutter to run the script.
@@ -70,11 +114,21 @@ if __name__ == '__main__':
     arr = ranked_output.text.split("\n");
     arr.pop(0)
     arr.pop(0)
-    print(arr)
 
     index = arr[0].find(".") + 3
     prompt = arr[0][index:]
 
-    generate_image(prompt)
+    generated_image = generate_image(prompt)
 
-    print(prompt)
+    generated_image_path = "image.png"
+    generated_image.save(generated_image_path);
+
+    audio_path = "audio.mp3"
+    generate_audio(summary.text, audio_path);
+
+    gameplay_video_path = "Download.mp4"
+
+    create_video_with_overlay(gameplay_video_path, generated_image_path, summary.text, audio_path)
+
+    print ("Video generated")
+
