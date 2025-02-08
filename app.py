@@ -14,6 +14,9 @@ os.makedirs(STATIC_FOLDER, exist_ok=True)
 
 video_urls = []
 
+# This function is supposted to send the uploaded pdf files to be used by the AI and then
+# Also to create the list of the generated videos with their loacl server to be displayed on the UI.
+
 
 @app.route('/process_pdf', methods=['POST'])
 def process_pdf():
@@ -26,12 +29,14 @@ def process_pdf():
         file.save(file_path)
 
         python_executable = sys.executable
-        result = subprocess.run([python_executable, 'main.py', file_path, brainrot_mode], capture_output=True, text=True)
+        result = subprocess.run(
+            [python_executable, 'main.py', file_path, brainrot_mode], capture_output=True, text=True)
         print("Subprocess STDOUT:", result.stdout)
         if result.returncode == 0:
             unique_id = str(uuid.uuid4())
             output_video_filename = f'output_{unique_id}.mp4'
-            output_video_path = os.path.join(STATIC_FOLDER, output_video_filename)
+            output_video_path = os.path.join(
+                STATIC_FOLDER, output_video_filename)
             video_url = f'./../../../static/{output_video_filename}'
             video_urls.append(video_url)
             print(video_urls)

@@ -235,7 +235,7 @@
                     const brainrotSwitch = document.getElementById('brainrotSwitch');
                     const brainrotMode = brainrotSwitch.checked ? 1 : 0;
                     formData.append('brainrot_mode', brainrotMode);
-
+                    // Fetch from the server
                     fetch('http://127.0.0.1:5000/process_pdf', {
                         method: 'POST',
                         body: formData
@@ -249,7 +249,7 @@
                             let reelsContainer = document.getElementById('reelsContainer');
                             reelsContainer.innerHTML = ''; // Clear previous reels
 
-                            // Ensure video_urls exist before looping
+                            // Card structure for reels loaded with relevant data from backend
                             if (data.video_urls && data.video_urls.length > 0) {
                                 data.video_urls.forEach(video_url => {
                                     let reel = document.createElement('div');
@@ -285,10 +285,12 @@
 
 
         function likeVideo(button) {
+            // Future Implementatino
             console.log("Liked");
         }
 
         function dislikeVideo(button) {
+            // Future Implementatino
             console.log("Disliked");
         }
 
@@ -328,7 +330,7 @@
             });
         }
 
-        // Create an IntersectionObserver to detect when videos enter the viewport
+        // Create an IntersectionObserver to detect when videos enter the Active runner view
         let observer = new IntersectionObserver(handleActiveVideo, {
             threshold: 0.6, 
         });
