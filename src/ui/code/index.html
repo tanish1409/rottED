@@ -198,7 +198,30 @@
         }
 
         function uploadPDF() {
-            document.getElementById('pdfUpload').click();
+            let fileInput = document.getElementById('pdfUpload');
+            fileInput.click();
+
+            fileInput.onchange = function () {
+                let file = fileInput.files[0];
+                if (file) {
+                    let pdfPath = file.path;  // Get the file path (works on Electron, Node.js, but needs tweaking in browsers)
+                    
+                    let command = `python process_pdf.py "${pdfPath}"`;
+
+                    // Execute the command (only works in Node.js/Electron, not in a standard browser)
+                    require('child_process').exec(command, (error, stdout, stderr) => {
+                        if (error) {
+                            console.error(`Error: ${error.message}`);
+                            return;
+                        }
+                        if (stderr) {
+                            console.error(`Stderr: ${stderr}`);
+                            return;
+                        }
+                        console.log(`Output: ${stdout}`);
+                    });
+                }
+            };
         }
 
         function likeVideo(button) {

@@ -1,4 +1,6 @@
 google-generativeai
+google-genai
 Pillow
 moviepy
 gtts
+flask
