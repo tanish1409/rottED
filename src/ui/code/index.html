@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=375, initial-scale=1.0">
+    <title>Reels App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 60px;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            gap: 15px;
+        }
+        .sidebar button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .main {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .reels-container {
+            width: 375px;
+            height: 667px;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+        .reels-container::-webkit-scrollbar {
+            display: none;
+        }
+        .reel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            scroll-snap-align: start;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .controls button {
+            transition: transform 0.2s ease-in-out;
+            
+        }
+        .controls button:active {
+            transform: scale(1.5);
+        }
+        .reaction-buttons {
+            position: absolute;
+            bottom: 50px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .reaction-buttons button {
+            background: transparent;
+            border: none;
+            padding: 12px 12px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .reaction-buttons button:hover {
+            background: rgba(135, 135, 135, 0.7);
+            transform: scale(1.3);
+        }
+        .reaction-buttons button:active {
+            background: transparent;
+            transform: scale(2);
+        }
+        .plus-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgb(255, 255, 255);
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .plus-btn:hover{
+            transform: scale(1.2);
+            background: lightgray;
+        }
+
+        .plus-btn:active{
+            color: rgb(255, 255, 255);
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <button>🏠</button>
+        <button>🔍</button>
+        <button>📁</button>
+    </div>
+    <div class="main">
+        <div class="reels-container">
+            <div class="reel">
+                <video src=".\..\videos\demo2.mp4" muted autoplay loop></video>
+                <div class="controls">
+                    <button onclick="toggleMute(this)">🔊</button>
+                </div>
+                <div class="reaction-buttons">
+                    <button onclick="likeVideo(this)">👍</button>
+                    <button onclick="dislikeVideo(this)">👎</button>
+                </div>
+            </div>
+            <div class="reel">
+                <video src=".\..\videos\demo1.mp4" muted autoplay loop></video>
+                <div class="controls">
+                    <button onclick="toggleMute(this)">🔊</button>
+                </div>
+                <div class="reaction-buttons">
+                    <button onclick="likeVideo(this)">👍</button>
+                    <button onclick="dislikeVideo(this)">👎</button>
+                </div>
+            </div>
+            <div class="reel">
+                <video src=".\..\videos\demo2.mp4" muted autoplay loop></video>
+                <div class="controls">
+                    <button onclick="toggleMute(this)">🔊</button>
+                </div>
+                <div class="reaction-buttons">
+                    <button onclick="likeVideo(this)">👍</button>
+                    <button onclick="dislikeVideo(this)">👎</button>
+                </div>
+            </div>
+            <div class="reel">
+                <video src=".\..\videos\demo3.mp4" muted autoplay loop></video>
+                <div class="controls">
+                    <button onclick="toggleMute(this)">🔊</button>
+                </div>
+                <div class="reaction-buttons">
+                    <button onclick="likeVideo(this)">👍</button>
+                    <button onclick="dislikeVideo(this)">👎</button>
+                </div>
+            </div>
+            <div class="reel">
+                <video src=".\..\videos\demo6.mp4" muted autoplay loop></video>
+                <div class="controls">
+                    <button onclick="toggleMute(this)">🔊</button>
+                </div>
+                <div class="reaction-buttons">
+                    <button onclick="likeVideo(this)">👍</button>
+                    <button onclick="dislikeVideo(this)">👎</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plus-btn" onclick="uploadPDF()">+</div>
+    <input type="file" id="pdfUpload" style="display: none;" accept="application/pdf">
+    
+    <script>
+        function toggleMute(button) {
+            let video = button.parentElement.previousElementSibling;
+            video.muted = !video.muted;
+            button.textContent = video.muted ? '🔇' : '🔊';
+        }
+
+        function uploadPDF() {
+            document.getElementById('pdfUpload').click();
+        }
+
+        function likeVideo(button) {
+            console.log("Liked");
+        }
+
+        function dislikeVideo(button) {
+            console.log("Disliked");
+        }
+
+        // Function to handle video playback based on scroll
+        function handleActiveVideo(entries) {
+            entries.forEach(entry => {
+                let video = entry.target.querySelector("video");
+
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.reel video').forEach(v => {
+                        if (v !== video) {
+                            v.pause();
+                            v.muted = true;
+                        }
+                    });
+                    video.play();
+                    video.muted = false;
+                } else {
+                    video.pause();
+                }
+            });
+        }
+
+        // Create an IntersectionObserver to detect when videos enter the viewport
+        let observer = new IntersectionObserver(handleActiveVideo, {
+            threshold: 0.6, 
+        });
+
+        // Observe all reel videos
+        document.querySelectorAll('.reel').forEach(reel => {
+            observer.observe(reel);
+        });
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.querySelectorAll('video').forEach(video => video.pause());
+            } else {
+                let activeVideo = document.querySelector('.reel video');
+                if (activeVideo) {
+                    activeVideo.play();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
