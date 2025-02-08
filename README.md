@@ -18,7 +18,8 @@ SPECIAL HIGHLIGHT -- Our BrainRot feature for the kids to learn in the language 
   - **static**: Stores the generated videos for the session.
   - **upload**: Stores uploaded pdfs for the session.
 
-  - **rottED.zip**: This is the zip version for the mobile app emulated on android studio. If interested in running this please install Android studio, after opening an emulated device connected with it, build the gradle project to see the app deployed. A video and screenshot would be provided with the submission.
+  - **rottED_Android**: This is the android version for the mobile app emulated on android studio. If interested in running this please install Android studio, after opening an emulated device connected with it, build the gradle project to see the app deployed. A video and screenshot would be provided with the submission.
+    This could not be uploaded as the project size was big to be put in the main repo so added as an additional link.
 
 ## 🎯 Objectives
 
