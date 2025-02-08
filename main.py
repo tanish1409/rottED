@@ -14,8 +14,8 @@ def get_api_key(file_path: str) -> str:
     with open(file_path, 'r') as file:
         return file.readline().strip()
 
-def generate_image(promtp:str)->Image:
 
+def generate_image(promtp: str) -> Image:
     generated_prompt = prompt + " *- NO TEXT PLEASE"
 
     response = client.models.generate_images(
@@ -29,11 +29,14 @@ def generate_image(promtp:str)->Image:
         image = Image.open(BytesIO(generated_image.image.image_bytes))
         return image
 
-def generate_audio (summary:str, path:str)->None:
+
+# Generate dicatation of summarized academic concepts
+def generate_audio(summary: str, path: str) -> None:
     tts = gTTS(summary)
     tts.save(path)
 
 
+# Generate final video output with image overlap and audio embedding
 def create_video_with_overlay(gameplay_video_path, overlay_image_path, overlay_text, audio_path):
     # Load gameplay video and extract a 60-second segment
     video = VideoFileClip(gameplay_video_path).subclipped(start_time=0, end_time=60)
@@ -43,7 +46,7 @@ def create_video_with_overlay(gameplay_video_path, overlay_image_path, overlay_t
     # Calculate the number of loops needed
     loops_required = math.ceil(audio.duration / video.duration)
 
-    # Concatenate the video to loop it
+    # Concatenate the video incase the audio is longer than the video
     if loops_required > 1:
         video = concatenate_videoclips([video] * loops_required)
     video = video.subclipped(0, audio.duration)  # Trim to exactly match audio duration
@@ -60,12 +63,11 @@ def create_video_with_overlay(gameplay_video_path, overlay_image_path, overlay_t
     final_video.write_videofile("final_output.mp4", fps=60)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     key = get_api_key("API_KEY.txt")
     client = genai.Client(api_key=key)
 
-
+    # Prevent running the program without the correct arguments passed through app.py
     if len(sys.argv) < 3:
         print("Error: No PDF file path provided or brainrot mode selected.")
         sys.exit(1)
@@ -74,8 +76,8 @@ if __name__ == '__main__':
     filepath = pathlib.Path(pdf_path)
     brainrot_mode = brainrot_mode.strip()
     brainrot_mode = int(brainrot_mode)
-    print(brainrot_mode)
 
+    # Toggle between Gen Z meme language and proper english
     if brainrot_mode == 1:
         prompt = "I have given you a PDF that outlines an academic concept. I want you to create a detailed summary of the" \
                  "content into a text that can be read in 60 seconds. The summary should include critical information and" \
@@ -107,12 +109,14 @@ if __name__ == '__main__':
 
     chat = client.chats.create(model="gemini-2.0-flash")
 
+    # Create a conversation with LLM to provide additional context and request more information.
     generated_prompts = chat.send_message(prompt)
 
     prompt = "Rank you outputs 1-5 based on relevance to the subject of the academic summary."
 
     ranked_output = chat.send_message(prompt)
 
+    # Sanitize output to get the best visualization prompt to feed into the image generator model
     arr = ranked_output.text.split("\n");
     arr.pop(0)
     arr.pop(0)
@@ -122,15 +126,17 @@ if __name__ == '__main__':
 
     generated_image = generate_image(prompt)
 
+    # Save image locally
     generated_image_path = "image.png"
     generated_image.save(generated_image_path);
 
+    # Save narration locally
     audio_path = "audio.mp3"
     generate_audio(summary.text, audio_path);
 
+    # Use tiktok template as background video
     gameplay_video_path = "Download.mp4"
 
     create_video_with_overlay(gameplay_video_path, generated_image_path, summary.text, audio_path)
 
-    print ("Video generated")
-
+    print("Video generated")

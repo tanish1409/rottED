@@ -25,11 +25,6 @@ def process_pdf():
         os.makedirs("uploads", exist_ok=True)
         file.save(file_path)
 
-        # result = subprocess.run(['python', 'main.py', file_path], capture_output=True, text=True)
-        # result = subprocess.run(
-        #    ['C:/Users/kunal/OneDrive/Desktop/Hackathon/test/venv/Scripts/python.exe', 'main.py', file_path],
-        #    capture_output=True, text=True)
-
         python_executable = sys.executable
         result = subprocess.run([python_executable, 'main.py', file_path, brainrot_mode], capture_output=True, text=True)
         print("Subprocess STDOUT:", result.stdout)
